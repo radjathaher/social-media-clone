@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Card, Icon, Label, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'; 
 import moment from 'moment';
 
-export default function PostCard({ post: { body, createdAt, username, id, likeCount, commentCount, likes} }) {
-    function likePost () {
-        console.log('Like post!');
-    }
+import { AuthContext } from '../context/auth';
+import LikeButton from './LikeButton';
+import DeleteButton from './DeleteButton';
+
+export default function PostCard({ post }) {
+    const { user } = useContext(AuthContext);
+
+    const { body, createdAt, username, id, likeCount, commentCount, likes} = post ?? {};
     
     function commentPost () {
         console.log('Commment post!');
@@ -20,28 +24,21 @@ export default function PostCard({ post: { body, createdAt, username, id, likeCo
             size='mini'
             src='https://react.semantic-ui.com/images/avatar/large/molly.png'
             />
-            <Card.Header>{username}</Card.Header>
+            <Card.Header>{username ?? 'Unknown user'}</Card.Header>
             <Card.Meta as={Link} to={`/posts/${id}`}>{moment(createdAt).fromNow()}</Card.Meta>
-            <Card.Description>{body}</Card.Description>
-            Molly wants to add you to the group <strong>musicians</strong>
+            <Card.Description>{body ?? 'No content available'}</Card.Description>
         </Card.Content>
         <Card.Content extra>
-            <Button as='div' labelPosition='right' onClick={likePost}>
-                <Button color='teal' basic>
-                    <Icon name='heart' />
-                </Button>
-                <Label basic color='teal' pointing='left'>
-                    {likeCount}
-                </Label>
-            </Button>
-            <Button as='div' labelPosition='right' onClick={commentPost}>
+            <LikeButton user={user} post={{ id, likes, likeCount}}/>
+            <Button labelPosition='right' as={Link} to={`/posts/${id}`}>
                 <Button color='blue' basic>
                     <Icon name='comments' />
                 </Button>
                 <Label basic color='blue' pointing='left'>
-                    {commentCount}
+                    {commentCount ?? 0}
                 </Label>
             </Button>
+            {user && user.username === username && <DeleteButton postId={id} /> }
         </Card.Content>
     </Card>
     );

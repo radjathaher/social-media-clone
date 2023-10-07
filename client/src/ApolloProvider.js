@@ -6,8 +6,7 @@ import {
     createHttpLink,
     ApolloProvider
     } from '@apollo/client';
-import { setContext } from 'apollo-link-context';
-
+import { setContext } from '@apollo/client/link/context';   
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:5000'
